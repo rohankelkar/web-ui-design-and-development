@@ -1,0 +1,152 @@
+<html>
+<head>
+<title>Summary</title>
+</head>
+
+<body>
+<header><h3><b>Summary Page</b> </h3></header>
+<div style = "width: 700px; height: 490px; margin: auto; margin-top: 120px; margin-left: 220px; border-style: solid; border-width : 1.5px; border-color: gray; border-radius: 10px; position: absolute;">
+        <div style = "position: absolute; border-radius: 7px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; background-color: grey; width: 699px; height: 50px;">
+            <b><p style = "position: absolute; top: -3%; left: 45%; font-family: sans-serif; font-size: 11.5pt;">Summary</p></b>
+        </div>  
+
+		<div onclick = "calculateScore()" style = "border: solid 1px; position: absolute; width: 640px; height: 320px; top: 55%; left:18%; margin-top: -180px; margin-left: -100px;">
+		<div style ="margin-left: 25px">
+		<details open>
+				<summary style = "margin-top: 10px; font-family: sans-serif; font-size: 11.5pt;">Quantitative Section</summary>
+				<p style = "font-family: sans-serif; font-size: 11.5pt;"><b>Number of Questions Answered: 2<br>
+				Number of Correct Answered: <span id="A" style = "font-family: sans-serif; font-size: 11.5pt;"></span><br>
+				Score: <span id = "B"></span><br></b></p>
+		</details>
+		<details open>
+				<summary style = "font-family: sans-serif; font-size: 11.5pt;">Reading Section</summary>
+				<p style = "font-family: sans-serif; font-size: 11.5pt;"><b>Number of Questions Answered: 1<br>
+				Number of Correct Answered: <span id="C" style = "font-family: sans-serif; font-size: 11.5pt;"></span><br>
+				Score: <span id = "D"></span><br></b></p>
+		</details>
+		<details open>
+				<summary style = "font-family: sans-serif; font-size: 11.5pt;">Audio/Video Section</summary>
+		 		<p style = "font-family: sans-serif; font-size: 11.5pt;"><b>Number of Questions Answered: 1<br>
+				Number of Correct Answered: <span id="E" style = "font-family: sans-serif; font-size: 11.5pt;"></span><br>
+				Score: <span id = "F"></span><br></b></p>
+		</details> <br>
+		</div>
+		</div>
+		<script>
+			function calculateScore() {
+				qs = document.location.search;
+				qs = qs.split('+').join(' ');
+
+				var params = {},
+				tokens,
+				re = /[?&]?([^=]+)=([^&]*)/g;
+
+				while (tokens = re.exec(qs)) {
+					params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+				}
+
+				var options = params.data;
+				var section1 = {
+					'q1': 'D',
+					'q2': 'A'
+
+				}  
+				var section2 = {
+					'q3': '$650',
+					'q3sub':'Twitter'
+				}
+				var section3 = {
+					'q4': 'A'
+				}
+				var selectedOptions = {};
+				var scores = options.split(";");
+				
+				for(i=0; i < scores.length; i++){
+					var temp = scores[i];
+					if(temp.length > 0){
+						var score = temp.split("=");
+						var question = score[0];
+						var option = score[1];
+						selectedOptions[question] = option;
+					}      
+				}
+				console.log(selectedOptions);
+				var quantScore = 0;
+				var quantQuestionAns = 0;
+				var quantQuestionCor = 0;
+
+
+				var readScore = 0;
+				var readQuestionAns = 0;
+				var readQuestionCor = 0;
+
+				var videoScore = 0;
+				var videoQuestionAns = 0;
+				var videoQuestionCor = 0;
+
+				for(k in section1) {
+					if(k in selectedOptions){
+						quantQuestionAns += 1;
+						if(section1[k] == selectedOptions[k]){
+							quantScore += 1;
+							quantQuestionCor += 1;
+						}   
+					}
+				}
+				for(k in section2) {
+					var allOptionsCorrect = 0
+					if(k in selectedOptions){
+						readQuestionAns += 1;
+						if(section2[k] == selectedOptions[k]){
+								readScore += 1;
+								readQuestionCor += 1;
+								allOptionsCorrect = 1;
+						}
+						else {
+							readScore -= 1;
+							readQuestionCor -= 1;
+							allOptionsCorrect = 0;
+						}
+					}
+
+					if (readScore < 0 || readQuestionCor < 0 || allOptionsCorrect == 1) {
+						readScore = 0;
+						readQuestionCor = 0;
+					}
+				}
+				for(k in section3) {
+					if(k in selectedOptions){
+						videoQuestionAns += 1;
+						if(section3[k] == selectedOptions[k]){
+							videoScore += 1;
+							videoQuestionCor += 1;
+						}
+						else if (videoScore > 0) {
+							videoScore -= 1;
+						}        
+					}
+				}
+
+				document.getElementById('A').innerHTML = quantQuestionCor; 
+				document.getElementById('B').innerHTML = quantScore;  
+
+				document.getElementById('C').innerHTML = readQuestionCor;   
+				document.getElementById('D').innerHTML = readScore;  
+
+				document.getElementById('E').innerHTML = videoQuestionCor;   
+				document.getElementById('F').innerHTML = videoScore;  
+			}
+
+			function signout() {
+				window.location.href = "UserLogin.html";
+			}
+		</script>
+		<p style = "position: absolute; top: 83%; left: 43%; font-family: sans-serif; font-size: 11.5pt;"><b>Thank You!!</b></p>
+		
+		<div style="position: absolute; top: 93%; left: 47%; width: 25%;"> 
+		<input type = "reset" value = "Finish" style = "margin-left: -10px; width: 50% font-family: sans-serif; font-size: 11.5pt;" onclick = "signout()">
+		</div>
+
+	</div>
+</body>
+</html>

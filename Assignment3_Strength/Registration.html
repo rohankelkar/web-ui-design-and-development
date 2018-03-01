@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Form </title>
+    <link href='https://fonts.googleapis.com/css?family=Cantarell:400,500,300,700,700italic,500italic,300italic,400italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        function hasNumbers(t)
+{
+    return /\d/.test(t);
+}
+
+function getPasswordScore(password){
+    var alphaCount =  (password.replace(/[^a-zA-Z]+/g, "") == null ? 0 : password.replace(/[^a-zA-Z]+/g, "").length); // 4 characters
+    var spaceCount = (password.match(/\s/) == null ? 0 : password.match(/\s/).length); // no spaces
+    var specialCharacterCount = (password.match(/([!@#$%])/g)==null? 0 : password.match(/([!@#$%])/g).length); //1 special
+    var numberCount = (password.match(/\d/g) == null ? 0 : password.match(/\d/g).length); // or 1 number
+    var upperCaseCount = (password.match(/[A-Z]/g) == null ? 0 : password.match(/[A-Z]/g).length); // or 1 number
+    var lowerCaseCount = (password.match(/[a-z]/g) == null ? 0 : password.match(/[a-z]/g).length); // or 1 number
+    
+    var alphaScore = 0;
+    var specialCharacterScore = 0;
+    var numberScore = 0;
+    var upperCaseScore = 0;
+    var lowerCaseScore = 0;
+
+    //uppercase letter score
+    if(upperCaseCount > 1 & lowerCaseCount > 1){
+        upperCaseScore = 100;
+    }   
+
+    //alphabet score
+    if(alphaCount > 4){
+        alphaScore = 100;
+    }else{
+        alphaScore = alphaCount * 25;
+    }
+
+    //special character score
+    if(specialCharacterCount > 2){
+        specialCharacterScore = 100;
+    }else{
+        specialCharacterScore = specialCharacterCount * 50;
+    }
+
+    //number score
+    if(numberCount > 2){
+        numberScore = 100;
+    }else{
+        numberScore = numberCount * 50;
+    }
+
+    //averaging score to get a score percentage
+    score = (alphaScore + specialCharacterScore + numberScore + upperCaseScore )/4;
+
+    return score;
+}
+
+function checkPasswordStrength(password){
+    var score = 0;
+    var strengthMeter = document.getElementById("strength-meter");
+    var username = document.getElementById("username").value;
+    var strengthIndicator = document.getElementById("strength-indicator");
+
+    score = getPasswordScore(password);
+    
+    var error = document.getElementById("error-repass");
+
+    var spaceCount = (password.match(/\s/) == null ? 0 : password.match(/\s/).length); // no spaces
+    if(username.length > 0 && password.indexOf(username) > -1){
+        error.style.color = "red";
+        error.innerHTML= "Cannot contain username";
+    }else{
+        if(spaceCount){
+            error.style.color = "red";
+            error.innerHTML= "Spaces not allowed";
+        }else{
+            error.innerHTML="";
+        }   
+    }
+    
+    //updating the progress bar
+    strengthMeter.value = score;
+    
+    //strength indicator text
+    if(score < 21 ){
+        document.getElementById('para').style.display = "block";
+        strengthIndicator.innerHTML = "Very Weak";
+    }
+    if(score > 20 && score < 30){
+        document.getElementById('para').style.display = "block";
+        strengthIndicator.innerHTML = "Weak";
+    }
+    if(score > 29 && score < 60){
+        document.getElementById('para').style.display = "block";
+        strengthIndicator.innerHTML = "Medium";
+    }
+    if(score > 59 && score < 80){
+        document.getElementById('para').style.display = "none";
+        strengthIndicator.innerHTML = "Strong";
+    }
+    if(score > 80 && score < 100){
+        document.getElementById('para').style.display = "none";
+        strengthIndicator.innerHTML = "Very Strong";  
+    }
+    if(score >= 100){
+        document.getElementById('para').style.display = "none";
+        strengthIndicator.innerHTML = "Excellent";    
+    }
+    var rePass = document.getElementById("repassword");
+    if(rePass.value.length > 0){
+        verifyPasswordMatch(rePass.value);
+    }
+}   
+
+function verifyPasswordMatch(rePass){
+    var error = document.getElementById("error-repass");
+    if(rePass==""){
+        error.innerHTML="";
+        return;
+    }
+    var password = document.getElementById("password").value;
+    if(password!= rePass){
+        error.style.color = "red";
+        error.innerHTML = "Passwords do not match";
+    }else{
+        error.innerHTML = "Passwords match";
+        error.style.color = "green";
+    }
+}
+
+function submitForm(){
+    var error = "";
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    var repassword = document.getElementById("repassword").value;
+    var mobile = (document.getElementById("mobile") == null) ? "" : document.getElementById("mobile").value;
+    var email = document.getElementById("email").value;
+    var reemail = document.getElementById("reemail") == null ? "" : document.getElementById("reemail").value;
+    var securityOne = document.getElementById("security-question-1").value;
+    var securityAnswerOne = document.getElementById("security-answer-1").value;
+    var securityTwo = document.getElementById("security-question-2").value;
+    var securityAnswerTwo = document.getElementById("security-answer-2").value;
+    var interestOne = document.getElementById("interest-1").value;
+    var interestTwo = document.getElementById("interest-2").value;
+    var checked = 0;
+    
+    if(interestOne.checked == false && interestTwo.checked == false){
+        checked = 0;
+    }else{
+        checked = 1;
+    }
+
+    if(checked == 0){
+        error = error + " - Please check atleast one interest.\n";
+    }
+
+    if(username.length == 0){
+        error = error + " - User ID cannot be left blank.\n";
+    }
+    if(getPasswordScore(password) < 50){
+        error = error + " - Please generate a strong password.\n"
+    }
+    if(password != repassword){
+        error = error + " - Passwords do not match\n";
+    }
+
+    if(securityOne!="" && securityAnswerOne==""){
+        error = error + " - Please provide an answer to question 1.\n";
+    }
+
+    if(securityTwo!="" && securityAnswerTwo==""){
+        error = error + " - Please provide an answer to question 2.\n";
+    }
+    
+    if(securityOne == securityTwo){
+        error = error + " - Both questions cannot be the same.\n";
+    }
+
+    if(mobile!= null && mobile==""){
+        error = error + " - Mobile cannot be left blank.\n";    
+    }
+
+    if(email!= reemail){
+        error = error + " - Email address does not match."
+    }
+
+    if(error!=""){
+        alert("Errors: \n" + error);
+        return false;
+    }
+    return false;
+}
+
+function validateEmail(email){
+    if(email.length > 0){
+        var error = document.getElementById("error-email");
+        if(email.match(/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-.]+$/)){
+            error.style.color = "green";
+            error.innerHTML= "Valid email";
+        }else{
+            error.style.color = "red";
+            error.innerHTML= "Invalid email";
+        }   
+    }
+}
+
+function validateMobile(mobile){
+    if(mobile.length > 0){
+        var error = document.getElementById("error-mobile");
+        if(mobile.match(/\(?\d{3}\)?-? *\d{3}-? *-?\d{4}/)){
+            error.style.color = "green";
+            error.innerHTML= "Valid mobile";
+        }else{
+            error.style.color = "red";
+            error.innerHTML= "Invalid mobile";
+        }
+    }
+}
+
+function verifyEmailMatch(email){
+
+    var originalEmail = document.getElementById("email");
+    var error = document.getElementById("error-email");
+    if(email==""){
+        error.innerHTML="";
+        return;
+    }
+    if(originalEmail.value!=email){
+        error.style.color = "red";
+        error.innerHTML="Emails do not match";
+    }else{
+        error.style.color = "green";
+        error.innerHTML= "Emails match";
+    }   
+    
+}
+
+function validateSecurityQuestion(question){
+    var originalQuestion = document.getElementById("security-question-1");
+    var error = document.getElementById("error-question");
+    if(question =="" && originalQuestion.value== ""){
+        error.innerHTML="";
+        return;
+    }
+    if(originalQuestion.value == question){
+        error.style.color="red";
+        error.innerHTML="Both questions cannot be same"
+    }else{
+        error.innerHTML="";
+    }
+}
+
+function clearForm(){
+    document.getElementById("registration-form").reset();
+    var errors = document.getElementsByClassName("error");
+    for(var i = errors.length - 1; i >= 0; --i){
+        errors[i].innerHTML = "";
+    } 
+}
+    </script>
+</head>
+
+<body>
+    <div class="container">
+            <h1 class="page-title">Registration</h1>
+            <section>
+                
+                <form action="#" onsubmit="return submitForm();" method="POST" id="registration-form">
+                    <fieldset>
+                        <!-- Username -->
+                        <div class="form-group">
+                            <label for="username">User ID: </label>
+                            <input id="username" type="text" required="required" name="username" placeholder=""> 
+                        </div>
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password">Password: </label>
+                            <input type="password" id="password" required="required" name="password" onfocus="checkPasswordStrength(this.value)" onkeyup="checkPasswordStrength(this.value)" placeholder=""> 
+
+                            <progress id="strength-meter" class="password-strength" max="100" value="0">
+
+                            </progress>
+                            <span id="strength-indicator"></span>
+
+                            <p id="para" >Must be between 7-20 characters in length and include 4 alpha characters; 1 numeric character (0,9) or 1 special character(!,#,$,%). The password is case sensitive and must not contain spaces or be the same as your userID</p>
+                        </div>
+                        <!-- Verify password -->
+                        <div class="form-group">
+                            <label for="repassword">Verify Password: </label>
+                            <input type="password" onkeyup="verifyPasswordMatch(this.value)" maxlength=20 required="required" id="repassword" name="repassword" placeholder="Password entered above should match"> 
+                            <div class="error" id="error-repass"></div>
+                        </div>
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email">Email Address: </label>
+                            <input type="email" maxlength=20 id="email" onkeyup="validateEmail(this.value)" name="email" required="required" title="Please provide a valid email address" pattern="^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-.]+$" placeholder=""> 
+                            <div class="error" id="error-email"></div>
+                        </div>
+                        <!-- Verify Email -->
+                        <div class="form-group">
+                            <label for="reemail">Verify Email Address: </label>
+                            <input type="email" title="Please provide a valid email address" id="reemail" onkeyup="verifyEmailMatch(this.value)" onfocus="validateEmail(this.value);verifyEmailMatch(this.value)" required="required" name="reemail" placeholder="Email address entered above should match" pattern="^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-.]+$"> 
+                        </div>
+                        <!-- Security Question 1 -->
+                        <div class="form-group">
+                            <label for="security-question-1">Security Question 1: </label>
+                            <input required="required" list="security-1" id="security-question-1" name="security-question-1" placeholder="Select your first security question">
+                            <datalist id="security-1">
+                                <option value="Sum of 2 + 3">
+                                <option value="Sum of 100 + 200">
+                                <option value="23 x 100 = ?">
+                                <option value="Capital of India">
+                                <option value="Capital of China">
+                            </datalist>
+                            <div class="error" id="error-question"></div>
+                        </div>
+                        <!-- Security Answer 1 -->
+                        <div class="form-group">
+                            <label for="security-question-1">Security Answer 1: </label>
+                            <input required="required" type="text" id="security-answer-1" name="security-answer-1" placeholder="Security Answer"> 
+                        </div>
+                        <!-- Security Question 2 -->
+                        <div class="form-group">
+                            <label for="security-question-2">Security Question 2: </label>
+                            <input required="required" list="security-2" id="security-question-2" name="security-question-2" oninput="validateSecurityQuestion(this.value)" onchange="validateSecurityQuestion(this.value)" onfocusout="validateSecurityQuestion(this.value)" placeholder="Select your second security question">
+                            <datalist id="security-2">
+                                <option value="Sum of 2 + 3">
+                                <option value="Sum of 100 + 200">
+                                <option value="23 x 100 = ?">
+                                <option value="Capital of India">
+                                <option value="Capital of China">
+                            </datalist>
+                        </div>
+                        <!-- Security Answer 2 -->
+                        <div class="form-group">
+                            <label for="security-question-2">Security Answer 2: </label>
+                            <input required="required" type="text" id="security-answer-2" name="security-answer-2" placeholder="Security Answer"> 
+                        </div>
+
+                        <!-- Mobile -->
+                        <div class="form-group">
+                            <label for="mobile">Mobile: </label>
+                            <input id="mobile" type="text" onfocusout="validateMobile(this.value)" onkeyup="validateMobile(this.value)"  name="mobile" required pattern="\(?\d{3}\)?-? *\d{3}-? *-?\d{4}" title="Please provide number in US format" placeholder="Mobile"> 
+                            <div class="error" id="error-mobile"></div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group">
+                            <label for="address">Address: </label>
+                            <textarea id="address" name="address" required="required" cols=100 rows=5></textarea>
+                        </div>
+
+                        <!-- Interest -->
+                        <div class="form-group">
+                            <label for="interest">Areas you maybe interested in, select one or more. </label>
+                            <textarea id="interest" name="interest" required="required" cols=100 rows=5></textarea>
+                        </div>
+
+                        <!-- Form button -->
+                        <div class="form-buttons">
+                            <button type="button" class="submit cancel-button" onclick="clearForm()" value="Cancel">Cancel</button>
+                            <input type="submit" class="submit" id="submit" value="Register">
+                            
+                        </div>
+                        <span id="registration-text"></span>
+                    </fieldset>
+
+                </form>
+            </section>
+
+    </div>
+    
+</body>
+</html>

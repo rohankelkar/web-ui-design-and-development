@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>Survey</title>
+</head>
+<body>
+	<header><h3><b>Survey SCO</b> </h3></header>
+	<form style = "margin-top: 20px;" action = "Summary.html" method = "get">
+		<div style = "width: 700px; height: 430px; margin: auto; margin-top: 120px; margin-left: 220px; border-style: solid; border-width : 1.5px; border-color: gray; border-radius: 10px; position: absolute;">
+			<div style = "position: absolute; border-radius: 7px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; background-color: grey; width: 699px; height: 50px;">
+				<b><p style = "position: absolute; top: -3%; left: 45%; font-family: sans-serif; font-size: 11.5pt;">Survey</p></b>
+			</div>  
+
+			<div style = "width: 700px; height: 430px;">
+				<div style = "margin-left: 15px; margin-right: 20px; margin-top: 80px; font-family: sans-serif; font-size: 11.5pt">
+					<p>How did you like the center?</p>
+					<label style = "margin-right: 10px; font-family: sans-serif; font-size: 11.5pt">Comments:</label>
+					<textarea id = "comments" cols = "90" rows = "5" style = "overflow:scroll;"></textarea>
+				</div>
+
+				<div style = "margin-left: 15px; margin-right: 20px; margin-top: 40px; margin-bottom: 20px">
+					<label style = "font-family: sans-serif; font-size: 11.5pt">Select Text Area Location:</label>
+				</div>
+				<div>
+					<label style = "margin-left: 15px; margin-right: 20px; font-size: 11.9pt; font-family: sans-serif;">City:</label>
+					<input list="area" name="area">
+					<datalist id="area">
+						<option value="San Jose">
+							<option value="Sunnyvale">
+								<option value="Mountain View">
+									<option value="Palo Alto">
+										<option value="Santa Clara">
+										</datalist>
+										<label style = "margin-left: 25px; margin-right: 20px; font-size: 11.9pt; font-family: sans-serif;">Room Number:</label>
+
+										<input list="room" name="room">
+										<datalist id="room">
+											<option value="Room 221">
+												<option value="Room 332">
+													<option value="Room 212">
+														<option value="Room 200">
+															<option value="Room 121">
+															</datalist>
+														</div>
+
+				<input type = "submit" value = "Submit & Get Score" onclick = "setHidden()" style = "margin-left: 15px; margin-top: 90px; margin-right: 50px; width: 160px; font-size: 11.9pt; font-family: sans-serif;">
+
+				<input type = "submit" value = "Skip & Get Score" onclick = "setHidden()" style = "margin-top: 50px; width: 165px; font-size: 11.9pt; font-family: sans-serif;">
+
+				<input type="hidden" id="data" name="data" value="">
+			</div>
+
+			<script>
+				function getOptionsValue() {
+					qs = document.location.search;
+					qs = qs.split('+').join(' ');
+
+					var params = {},
+					tokens,
+					re = /[?&]?([^=]+)=([^&]*)/g;
+
+					while (tokens = re.exec(qs)) {
+						params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+					}
+
+					return params.data;
+				}
+				function getHidden() {
+					var hidden = document.getElementById("data");
+					var hiddenVal = hidden.value;
+					var options = getOptionsValue();
+					hiddenVal = hiddenVal + options;
+					hidden.value = hiddenVal;
+				}
+				function setHidden() {
+					getHidden();
+					var hidden = document.getElementById("data");
+					var hiddenVal = hidden.value;
+					hidden.value = hiddenVal;
+				}
+			</script> 
+
+		</div>
+	</form>
+</body>
+</html>
