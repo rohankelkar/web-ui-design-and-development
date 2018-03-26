@@ -1,0 +1,332 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Health Camp SPA</title>
+  <meta name="description" content="Health Camp SPA">
+  <meta name="author" content="Andrew Wong">
+  <meta name="keywords" content="HTML,CSS,XML,JavaScript">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+  <!-- <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script> -->
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+</head>
+  <header></header>
+  <nav>
+    <ul class="navbar">
+      <li><a id="home_button" href="#home">Health Camp SPA</a></li>
+      <li><a id="demographics_button" href="#demographics">Demographics</a></li>
+      <li><a id="health_vitals_button" href="#health-vitals">Health Vitals</a></li>
+      <li><a id="reports_button" href="#reports">Reports</a></li>
+    </ul>
+  </nav>
+  <section>
+    <div id="demographics">
+      <div class="left-panel">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" required="required" pattern="[A-Za-z0-9]{1,20}">
+        <p>
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" required="required" pattern="[A-Za-z0-9]{1,20}">
+        <p>
+        <label for="gender">Gender:</label>
+        <select id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="others">Others</option>
+        </select>
+        <p>
+        <label for="age">Age:</label>
+        <input type="text" id="age" name="age" pattern="[0-9.]+">
+        <p>
+        <label for="notes">Notes:</label>
+        <input type="text" id="notes" name="notes">
+        <p>
+        <button type="button" id="save-profile"> Save Profile</button>
+      </div>
+      <div class="right-panel">
+        <video width="480" height="360" id="screenshot-video" class="videostream" autoplay></video>
+        <img width="480" height="360" id="screenshot-img"> </img><p>
+        <button type="button" id="screenshot-button">Take photo</button>
+        <button type="button" id="screenshot-reset">Reset</button>
+      </div>
+    </div>
+    <div id="health-vitals">
+      <div class="left-panel">
+        <label for="height">Height:</label>
+        <input type="text" id="height" name="height">
+        <p>
+        <label for="weight">Weight:</label>
+        <input type="text" id="weight" name="weight">
+        <p>
+        <label for="temperature">Body Temperature:</label>
+        <input type="text" id="temperature" name="temperature">
+        <p>
+        <label for="pulse_rate">Pulse Rate:</label>
+        <input type="text" id="pulse_rate" name="pulse_rate">
+        <p>
+        <label for="blood_pressure">Notes:</label>
+        <input type="text" id="blood_pressure" name="notes">
+        <p>
+        <button type="button" id="save-health"> Save Health Vitals</button>
+      </div>
+      <div class="right-panel">
+        <p>
+        <label for="medications">Medications:</label>
+        <input type="text" id="medications" name="medications">
+        <p>
+        <label for="notes_2">Notes:</label>
+        <input type="text" id="notes_2" name="notes_2">
+      </div>
+    </div>
+    <div id="reports">
+         <table id="reports-table" style="width:100%">
+           <tr>
+             <th>Name</th>
+             <th>Age</th>
+             <th>Gender</th>
+             <th>Photo</th>
+             <th>Mediations</th>
+             <th>Notes</th>
+           </tr>
+        </table>
+    </div>
+  </section>
+  <footer>
+  </footer>
+
+
+<body>
+  <!-- <script src="index.js"></script> -->
+  <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+  <script>
+  const screenshot_button = document.querySelector('#screenshot-button');
+  const img = document.querySelector('#screenshot-img');
+  const video = document.querySelector('#screenshot-video');
+  const canvas = document.createElement('canvas');
+  const screenshot_reset = document.querySelector('#screenshot-reset');
+  const save_profile = document.querySelector('#save-profile');
+  const save_health = document.querySelector('#save-health');
+  const home_button = document.querySelector('#home_button');
+  const demographics_button = document.querySelector('#demographics_button');
+  const health_vitals_button = document.querySelector('#health_vitals_button');
+  const reports_button = document.querySelector('#reports_button');
+
+
+  var key = "";
+  var key_payload = {};
+
+  screenshot_button.onclick = video.onclick = function() {
+    video.style.display = 'none';
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    // Other browsers will fall back to image/png
+    img.style.display = 'block';
+    img.src = canvas.toDataURL('image/png');
+  };
+
+  screenshot_reset.onclick = function(){
+    video.style.display = 'block';
+    img.style.display = 'none';
+    img.src = "#";
+    videoOn();
+  }
+
+  save_profile.onclick = function(){
+    var first_name = $("#first_name").val();
+    var last_name = $("#last_name").val();
+    var gender = $("#gender :selected").val();
+    var age = $("#age").val();
+    var notes = $("#notes").val();
+    // var picture = img.src.replace(/^data:image\/(png|jpg);base64,/,"");
+    var picture = img.src;
+
+    var profile = {"first": first_name,
+                  "last": last_name,
+                  "gender": gender,
+                  "age": age,
+                  "notes": notes,
+                  "picture": picture};
+    key = first_name+"|"+last_name+"|"+gender;
+    localStorage.setItem(key, JSON.stringify(profile));
+    key_payload = JSON.parse(localStorage.getItem(key));
+    // console.log(profile);
+    // console.log(key_payload);
+    $("#demographics").hide();
+    $("#health-vitals").show();
+    $("#reports").hide();
+
+  }
+
+  save_health.onclick = function(){
+      if(!key){
+        alert("Empty Key, need to select profile first!");
+      }else{
+        if(jQuery.isEmptyObject(key_payload)){
+          key_payload = JSON.parse(localStorage.getItem(key));
+        }else{
+          var height = $("#height").val();
+          var weight = $("#weight").val();
+          var temperature = $("#temperature").val();
+          var pulse_rate = $("#pulse_rate").val();
+          var blood_pressure = $("#blood_pressure").val();
+          var medications = $("#medications").val();
+          var notes_2 = $("#notes_2").val();
+          key_payload["height"] = height;
+          key_payload["weight"] = weight;
+          key_payload["temperature"] = temperature;
+          key_payload["pulse_rate"] = pulse_rate;
+          key_payload["blood_pressure"] = blood_pressure;
+          key_payload["medications"] = medications;
+          key_payload["notes"] = notes_2;
+          console.log(key_payload);
+          localStorage.setItem(key, JSON.stringify(key_payload));
+          key_payload = JSON.parse(localStorage.getItem(key));
+          console.log(key_payload);
+          reports_page();
+        }
+      }
+  }
+  home_button.onclick = function(){
+    demographics_page();
+  }
+  demographics_button.onclick = function(){
+    demographics_page();
+  }
+  health_vitals_button.onclick = function(){
+    health_vitals_page();
+  }
+  reports_button.onclick = function(){
+    reports_page();
+  }
+
+  $(function(){
+    demographics_page();
+  });
+
+  function demographics_page(k){
+    $("#demographics").show(showData(k));
+    $("#health-vitals").hide();
+    $("#reports").hide();
+    videoOn();
+  }
+
+  function health_vitals_page(){
+    $("#demographics").hide();
+    $("#health-vitals").show();
+    $("#reports").hide();
+    videoOff();
+  }
+  function videoOff(){
+    video.pause();
+    video.src = "";
+    video.srcObject.stop();
+  }
+  function videoOn(){
+    function hasGetUserMedia() {
+      return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+    }
+
+    if (!hasGetUserMedia()) {
+      alert('getUserMedia() is not supported by your browser');
+    }
+    var vgaConstraints = {
+      video: {width: {exact: 640}, height: {exact: 480}}
+    };
+    function handleSuccess(stream) {
+      video.srcObject = stream;
+    }
+
+    function handleError(error) {
+      console.error('Reeeejected!', error);
+    }
+    navigator.mediaDevices.getUserMedia(vgaConstraints).then(handleSuccess).catch(handleError);
+  }
+
+  function reports_page(){
+    $("#demographics").hide();
+    $("#health-vitals").hide();
+    $("#reports").hide();
+    $("#reports").show(showReports());
+    videoOff();
+  }
+  function showData(k){
+    var p = localStorage.getItem(k);
+    p = JSON.parse(p);
+    console.log(p);
+    if(p == null){
+      return;
+    }
+    $("#first_name").val(p.first);
+    $("#last_name").val(p.last);
+    $("#gender").val(p.gender);
+    $("#age").val(p.age);
+    $("#notes").val(p.notes);
+    $("#height").val(p.height);
+    $("#weight").val(p.weight);
+    $("#temperature").val(p.temperature);
+    $("#pulse_rate").val(p.pulse_rate);
+    $("#blood_pressure").val(p.blood_pressure);
+    $("#medications").val(p.medications);
+    $("#notes_2").val(p.notes);
+    if(p.picture){
+      // $("screenshot-img").attr('src', p.picture);
+      video.style.display = 'none';
+      img.style.display = 'block';
+      img.src = p.picture;
+    }else{
+      videoOn();
+      video.style.display = 'block';
+      img.style.display = 'none';
+      img.src = "#";
+    }
+
+  }
+  function showReports(){
+    var table = document.getElementById("reports-table");
+    for(var i = table.rows.length - 1; i > 0; i--){
+      table.deleteRow(i);
+    }
+    $.each(localStorage, function(key, value){
+      var row = table.insertRow(1);
+      var payload = localStorage.getItem(key);
+      row.onclick = function(){
+        var k = row.childNodes[0].innerHTML;
+        demographics_page(k);
+      };
+      if(payload == null){
+        return;
+      }
+      payload = JSON.parse(payload);
+      var key_placeholder = row.insertCell(0);
+      var name = row.insertCell(1);
+      var age = row.insertCell(2);
+      var gender = row.insertCell(3);
+      var picture = row.insertCell(4);
+      var medications = row.insertCell(5);
+      var notes = row.insertCell(6);
+      key_placeholder.innerHTML = key;
+      key_placeholder.style.display = 'none';
+      name.innerHTML = payload.first+" "+payload.last;
+      age.innerHTML = payload.age;
+      gender.innerHTML = payload.gender;
+      picture.innerHTML = "<img height='48' width='64' src='"+payload.picture+"'/>'";
+      medications.innerHTML = payload.medications;
+      notes.innerHTML = payload.notes;
+    });
+  }
+
+  </script>
+
+</body>
+</html>
